@@ -2,4 +2,4 @@
 
 # プロジェクトのトップレベル README
 
-- [サブフォルダ1](./IR-WebRimocon_v1/README.md)
+- [サブフォルダ1](./README.md)

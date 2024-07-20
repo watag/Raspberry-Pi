@@ -1,0 +1,44 @@
+import evdev
+from evdev import InputDevice, categorize, ecodes
+
+# Joy-Conのデバイスファイルを探す
+devices = [InputDevice(path) for path in evdev.list_devices()]
+joycon = None
+joycon_name = None
+
+for device in devices:
+    if 'Joy-Con' in device.name:
+        joycon = device
+        joycon_name = device.name
+        break
+
+if joycon is None:
+    print("Joy-Conが見つかりませんでした。")
+else:
+    print(f"{joycon_name} が接続されました：", joycon)
+
+    button_mapping = {
+        ecodes.BTN_SOUTH: 'Aボタン',
+        ecodes.BTN_EAST: 'Bボタン',
+        ecodes.BTN_WEST: 'Yボタン',
+        ecodes.BTN_NORTH: 'Xボタン',
+        ecodes.BTN_TL: 'Lボタン',
+        ecodes.BTN_TR: 'Rボタン',
+        ecodes.BTN_TL2: 'ZLボタン',
+        ecodes.BTN_TR2: 'ZRボタン',
+        ecodes.BTN_SELECT: 'Minusボタン',
+        ecodes.BTN_START: 'Plusボタン',
+        ecodes.BTN_MODE: 'Homeボタン',
+        ecodes.BTN_THUMBL: '左スティック押し込み',
+        ecodes.BTN_THUMBR: '右スティック押し込み'
+    }
+
+    for event in joycon.read_loop():
+        if event.type == ecodes.EV_KEY:
+            key_event = categorize(event)
+            if key_event.keystate == key_event.key_down:
+                button_name = button_mapping.get(key_event.scancode, 'Unknown button')
+                print(f'{button_name} が押されました')
+        elif event.type == ecodes.EV_ABS:
+            abs_event = categorize(event)
+            print(abs_event)
